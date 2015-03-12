@@ -10,22 +10,26 @@ using Microsoft.Phone.Shell;
 using ToastNotificationClient.Resources;
 using Microsoft.Phone.Notification;
 using System.Text;
+using Flurl.Http;
+using System.Net.Http;
 
 namespace ToastNotificationClient
 {
     public partial class MainPage : PhoneApplicationPage
     {
-        String test;
+       
         public MainPage()
         {
-          
+
+            InitializeComponent();
+          /*
             /// Holds the push channel that is created or found.
             HttpNotificationChannel pushChannel;
 
             // The name of our push channel.
             string channelName = "ToastSampleChannel";
 
-            InitializeComponent();
+            
 
             // Try to find the push channel.
             pushChannel = HttpNotificationChannel.Find(channelName);
@@ -47,6 +51,8 @@ namespace ToastNotificationClient
                 // Bind this new channel for toast events.
                 pushChannel.BindToShellToast();
 
+                
+
             }
             else
             {
@@ -62,12 +68,19 @@ namespace ToastNotificationClient
                 System.Diagnostics.Debug.WriteLine(pushChannel.ChannelUri.ToString());
 
                 
-
+                //here
                 MessageBox.Show(String.Format("Channel Uri is {0}",
                     pushChannel.ChannelUri.ToString()));
-
+                Post(pushChannel.ChannelUri.ToString());
             }
+
+            */
+            
         }//constructor ends here
+
+
+        
+
 
         private void buttonNavigate_Click(object sender, RoutedEventArgs e)
         {
@@ -77,7 +90,7 @@ namespace ToastNotificationClient
 
         void PushChannel_ChannelUriUpdated(object sender, NotificationChannelUriEventArgs e)
         {
-
+            //here 
             Dispatcher.BeginInvoke(() =>
             {
                 // Display the new URI for testing purposes.   Normally, the URI would be passed back to your web service at this point.
@@ -85,12 +98,13 @@ namespace ToastNotificationClient
                 System.Diagnostics.Debug.WriteLine(e.ChannelUri.ToString());
                MessageBox.Show(String.Format("Channel Uri is {0}",
                     e.ChannelUri.ToString()));
-                
-               
+               Post(e.ChannelUri.ToString());
+
 
             });
         }
 
+      
 
 
 
@@ -102,6 +116,37 @@ namespace ToastNotificationClient
                     e.ErrorType, e.Message, e.ErrorCode, e.ErrorAdditionalData))
                     );
         }
+
+
+        //post
+        async private void Post(String uri)
+        {
+            var responseString = await "http://169.254.80.80/ashish/SendToast%20-%20Copy.php"
+     .PostUrlEncodedAsync(new { text = uri })
+     .ReceiveString();
+            
+            /* using (var client = new HttpClient())
+             {
+                 var values = new Dictionary<string, string>
+     {
+        { "text", "hello" }, 
+        { "sender", "manaswee" }
+     };
+
+                 var content = new FormUrlEncodedContent(values);
+
+                 var response = await client.PostAsync("http://192.168.0.102/ashish/httptest.php", content);
+
+                 var responseString = await response.Content.ReadAsStringAsync();
+                 MessageBox.Show("yeda ashish!! sandas aashish");
+             }*/
+
+        }
+
+
+
+
+
 
 
         void PushChannel_ShellToastNotificationReceived(object sender, NotificationEventArgs e)
